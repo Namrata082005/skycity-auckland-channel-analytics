@@ -2,7 +2,7 @@
 
 
 
-Interactive Streamlit dashboard for analyzing restaurant order channels, market share, profitability, and dependency risks across SkyCity Auckland Restaurants & Bars.\
+Interactive Streamlit dashboard for analyzing restaurant order channels, market share, profitability, and dependency risks across SkyCity Auckland Restaurants & Bars.
 
 
 
