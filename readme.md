@@ -2,7 +2,7 @@
 
 
 
-_Interactive Streamlit dashboard for analyzing restaurant order channels, market share, profitability, and dependency risks across SkyCity Auckland Restaurants \& Bars.\_
+Interactive Streamlit dashboard for analyzing restaurant order channels, market share, profitability, and dependency risks across SkyCity Auckland Restaurants & Bars.\
 
 
 
@@ -18,15 +18,15 @@ _Interactive Streamlit dashboard for analyzing restaurant order channels, market
 
 - <a href="#dataset">Dataset</a>
 
-- <a href="#tools--technologies">Tools \& Technologies</a>
+- <a href="#tools--technologies">Tools & Technologies</a>
 
 - <a href="#project-structure">Project Structure</a>
 
-- <a href="#data-cleaning--validation">Data Cleaning \& Validation</a>
+- <a href="#data-cleaning--validation">Data Cleaning & Validation</a>
 
 - <a href="#exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</a>
 
-- <a href="#key-findings--insights">Key Findings \& Insights</a>
+- <a href="#key-findings--insights">Key Findings & Insights</a>
 
 - <a href="#streamlit-dashboard">Streamlit Dashboard</a>
 
@@ -36,7 +36,7 @@ _Interactive Streamlit dashboard for analyzing restaurant order channels, market
 
 - <a href="#future-improvements">Future Improvements</a>
 
-- <a href="#author--contact">Author \& Contact</a>
+- <a href="#author--contact">Author & Contact</a>
 
 
 
@@ -142,7 +142,7 @@ Main ordering channels analyzed:
 
 
 
-<h2><a class="anchor" id="tools--technologies"></a>Tools \& Technologies</h2>
+<h2><a class="anchor" id="tools--technologies"></a>Tools & Technologies</h2>
 
 
 
@@ -194,7 +194,7 @@ skycity-auckland-channel-analytics/
 
 │   ├── 02\_EDA\_Channel\_Analytics.ipynb
 
-│   ├── 03\_Final\_Insights\_Recommendations.ipynb
+│   ├── 03\_Final\_Insights\_Recommendations.docx
 
 
 ---
