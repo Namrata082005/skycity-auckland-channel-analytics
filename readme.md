@@ -1,46 +1,46 @@
-\# 🍽️ SkyCity Auckland Restaurant Channel Analytics Dashboard
+# 🍽️ SkyCity Auckland Restaurant Channel Analytics Dashboard
 
 
 
-\_Interactive Streamlit dashboard for analyzing restaurant order channels, market share, profitability, and dependency risks across SkyCity Auckland Restaurants \& Bars.\_
+_Interactive Streamlit dashboard for analyzing restaurant order channels, market share, profitability, and dependency risks across SkyCity Auckland Restaurants \& Bars.\_
 
 
 
-\---
+---
 
 
 
-\## 📌 Table of Contents
+## 📌 Table of Contents
 
-\- <a href="#overview">Overview</a>
+- <a href="#overview">Overview</a>
 
-\- <a href="#project-goal">Project Goal</a>
+- <a href="#project-goal">Project Goal</a>
 
-\- <a href="#dataset">Dataset</a>
+- <a href="#dataset">Dataset</a>
 
-\- <a href="#tools--technologies">Tools \& Technologies</a>
+- <a href="#tools--technologies">Tools \& Technologies</a>
 
-\- <a href="#project-structure">Project Structure</a>
+- <a href="#project-structure">Project Structure</a>
 
-\- <a href="#data-cleaning--validation">Data Cleaning \& Validation</a>
+- <a href="#data-cleaning--validation">Data Cleaning \& Validation</a>
 
-\- <a href="#exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</a>
+- <a href="#exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</a>
 
-\- <a href="#key-findings--insights">Key Findings \& Insights</a>
+- <a href="#key-findings--insights">Key Findings \& Insights</a>
 
-\- <a href="#streamlit-dashboard">Streamlit Dashboard</a>
+- <a href="#streamlit-dashboard">Streamlit Dashboard</a>
 
-\- <a href="#how-to-run-this-project">How to Run This Project</a>
+- <a href="#how-to-run-this-project">How to Run This Project</a>
 
-\- <a href="#live-dashboard">Live Dashboard</a>
+- <a href="#live-dashboard">Live Dashboard</a>
 
-\- <a href="#future-improvements">Future Improvements</a>
+- <a href="#future-improvements">Future Improvements</a>
 
-\- <a href="#author--contact">Author \& Contact</a>
+- <a href="#author--contact">Author \& Contact</a>
 
 
 
-\---
+---
 
 
 
@@ -54,21 +54,21 @@ This project focuses on analyzing multi-channel restaurant ordering behavior acr
 
 The project includes:
 
-\- Data cleaning and validation
+- Data cleaning and validation
 
-\- KPI engineering
+- KPI engineering
 
-\- Market share analysis
+- Market share analysis
 
-\- Geographic analysis
+- Geographic analysis
 
-\- Risk and profitability analysis
+- Risk and profitability analysis
 
-\- Interactive Streamlit dashboard
+- Interactive Streamlit dashboard
 
 
 
-\---
+---
 
 
 
@@ -80,19 +80,19 @@ The main goal of this project is to help restaurants understand:
 
 
 
-\- Which ordering channels generate the highest orders
+- Which ordering channels generate the highest orders
 
-\- Which channels are most profitable
+- Which channels are most profitable
 
-\- Which restaurants are highly dependent on aggregators
+- Which restaurants are highly dependent on aggregators
 
-\- How customer behavior changes across regions and cuisines
+- How customer behavior changes across regions and cuisines
 
-\- How restaurants can build balanced and resilient channel strategies
+- How restaurants can build balanced and resilient channel strategies
 
 
 
-\---
+---
 
 
 
@@ -104,41 +104,41 @@ The dataset contains restaurant-level operational and financial information such
 
 
 
-\- Restaurant details
+- Restaurant details
 
-\- Cuisine type
+- Cuisine type
 
-\- Business segment
+- Business segment
 
-\- Subregion
+- Subregion
 
-\- Monthly orders
+- Monthly orders
 
-\- Revenue by channel
+- Revenue by channel
 
-\- Profit by channel
+- Profit by channel
 
-\- Delivery costs
+- Delivery costs
 
-\- Commission rates
+- Commission rates
 
-\- Channel share percentages
+- Channel share percentages
 
 
 
 Main ordering channels analyzed:
 
-\- InStore
+- InStore
 
-\- Uber Eats
+- Uber Eats
 
-\- DoorDash
+- DoorDash
 
-\- Self Delivery
+- Self Delivery
 
 
 
-\---
+---
 
 
 
@@ -146,25 +146,25 @@ Main ordering channels analyzed:
 
 
 
-\- Python
+- Python
 
-\- Pandas
+- Pandas
 
-\- NumPy
+- NumPy
 
-\- Matplotlib
+- Matplotlib
 
-\- Seaborn
+- Seaborn
 
-\- Plotly
+- Plotly
 
-\- Streamlit
+- Streamlit
 
-\- GitHub
+- GitHub
 
 
 
-\---
+---
 
 
 
@@ -172,7 +172,7 @@ Main ordering channels analyzed:
 
 
 
-```text
+text
 
 skycity-auckland-channel-analytics/
 
@@ -197,186 +197,148 @@ skycity-auckland-channel-analytics/
 │   ├── 03\_Final\_Insights\_Recommendations.ipynb
 
 
-
-<h2><a class="anchor" id="data-cleaning--validation"></a>Data Cleaning \& Validation</h2>
-
+---
 
 
-The dataset was cleaned and validated before analysis.
 
+<h2><a class="anchor" id="data-cleaning--validation"></a>Data Cleaning & Validation</h2>
 
+- The dataset was cleaned and validated before analysis.
 
 Main steps included:
 
-
-
-Checking missing values
-
-Removing duplicates
-
-Validating monthly order totals
-
-Validating revenue calculations
-
-Checking channel share consistency
-
-Identifying negative profit scenarios
-
-Creating business KPIs
-
-
+- Checking missing values
+- Removing duplicates
+- Validating monthly order totals
+- Validating revenue calculations
+- Checking channel share consistency
+- Identifying negative profit scenarios
+- Creating business KPIs
 
 Important KPIs created:
 
+- Total Revenue
+- Total Net Profit
+- Aggregator Dependence
+- InStore Reliance
+- Diversification Score
+- Risk Categories
 
-
-Total Revenue
-
-Total Net Profit
-
-Aggregator Dependence
-
-InStore Reliance
-
-Diversification Score
-
-Risk Categories
+---
 
 <h2><a class="anchor" id="exploratory-data-analysis-eda"></a>Exploratory Data Analysis (EDA)</h2>
 
-
-
-EDA was performed to understand business behavior and market trends.
-
-
+- EDA was performed to understand business behavior and market trends.
 
 Analysis sections included:
 
+- Overall business overview
+- Channel performance analysis
+- Geographic analysis
+- Cuisine analysis
+- Segment analysis
+- Dependency risk analysis
+- Profitability analysis
 
+---
 
-Overall business overview
+<h2><a class="anchor" id="key-findings--insights"></a>Key Findings & Insights</h2>
 
-Channel performance analysis
+### 1. Channel Performance
 
-Geographic analysis
+- Uber Eats generated strong delivery order volumes.
+- InStore channels generally produced higher profit margins.
 
-Cuisine analysis
+### 2. Geographic Insights
 
-Segment analysis
+- Central Auckland showed stronger delivery platform usage.
+- Some suburban areas demonstrated balanced channel behavior.
 
-Dependency risk analysis
+### 3. Cuisine Insights
 
-Profitability analysis
+- Pizza and QSR categories showed high aggregator dependence.
+- Cafes relied more on in-store customers.
 
-<h2><a class="anchor" id="key-findings--insights"></a>Key Findings \& Insights</h2>
+### 4. Risk Analysis
 
-1\. Channel Performance
+- Several restaurants showed high dependency on third-party aggregators.
+- Diversified restaurants demonstrated stronger operational resilience.
 
-Uber Eats generated strong delivery order volumes.
+### 5. Profitability Insights
 
-InStore channels generally produced higher profit margins.
+- High order volume did not always result in high profitability.
+- Commission rates negatively affected delivery profits.
 
-2\. Geographic Insights
-
-Central Auckland showed stronger delivery platform usage.
-
-Some suburban areas demonstrated balanced channel behavior.
-
-3\. Cuisine Insights
-
-Pizza and QSR categories showed high aggregator dependence.
-
-Cafes relied more on in-store customers.
-
-4\. Risk Analysis
-
-Several restaurants showed high dependency on third-party aggregators.
-
-Diversified restaurants demonstrated stronger operational resilience.
-
-5\. Profitability Insights
-
-High order volume did not always result in high profitability.
-
-Commission rates negatively affected delivery profits.
+---
 
 <h2><a class="anchor" id="streamlit-dashboard"></a>Streamlit Dashboard</h2>
 
-
-
 The project includes an interactive Streamlit dashboard with:
 
+- KPI cards
+- Channel performance analytics
+- Market share charts
+- Geographic heatmaps
+- Cuisine and segment analysis
+- Dependency risk analysis
+- Profitability analysis
+- Interactive filters
+- Downloadable filtered dataset
 
-
-KPI cards
-
-Channel performance analytics
-
-Market share charts
-
-Geographic heatmaps
-
-Cuisine and segment analysis
-
-Dependency risk analysis
-
-Profitability analysis
-
-Interactive filters
-
-Downloadable filtered dataset
+---
 
 <h2><a class="anchor" id="how-to-run-this-project"></a>How to Run This Project</h2>
 
-Clone the repository:
+### Clone the repository:
 
+```bash
 git clone https://github.com/yourusername/skycity-auckland-channel-analytics.git
+```
 
-Install dependencies:
+### Install dependencies:
 
+```bash
 pip install -r requirements.txt
+```
 
-Run Streamlit app:
+### Run Streamlit app:
 
+```bash
 streamlit run app.py
+```
 
-Open in browser:
+### Open in browser:
 
+```text
 http://localhost:8501
+```
+
+---
 
 <h2><a class="anchor" id="live-dashboard"></a>Live Dashboard</h2>
 
-
-
 Streamlit Dashboard Link:
 
-
-
+```text
 https://skycity-auckland-channel-analytics-ucq8xzimnv5jy5bttuyxdy.streamlit.app/
+```
+
+---
 
 <h2><a class="anchor" id="future-improvements"></a>Future Improvements</h2>
 
-Add forecasting models for future order prediction
+- Add forecasting models for future order prediction
+- Add customer sentiment analysis
+- Deploy dashboard with database integration
+- Add real-time analytics
+- Improve dashboard UI further
 
-Add customer sentiment analysis
+---
 
-Deploy dashboard with database integration
-
-Add real-time analytics
-
-Improve dashboard UI further
-
-<h2><a class="anchor" id="author--contact"></a>Author \& Contact</h2>
-
-
+<h2><a class="anchor" id="author--contact"></a>Author & Contact</h2>
 
 Name: Namrata Pokharkar
 
-
-
 📧 Email: namratapokharkar20@gmail.com
 
-
-
 🔗 LinkedIn: www.linkedin.com/in/namrata-pokharkar-862a55288
-
