@@ -13,35 +13,14 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Fix Streamlit Cloud sidebar/multiselect clipping
+# Safe layout fix: do not force sidebar width, so main page expands fully when sidebar is collapsed.
 st.markdown("""
 <style>
-section[data-testid="stSidebar"] {
-    width: 390px !important;
-    min-width: 390px !important;
-    overflow-x: visible !important;
-}
-
-section[data-testid="stSidebar"] > div {
-    width: 390px !important;
-    min-width: 390px !important;
-}
-
-section[data-testid="stSidebar"] div[data-baseweb="select"] {
-    width: 100% !important;
-    min-width: 100% !important;
-}
-
-section[data-testid="stSidebar"] div[data-baseweb="tag"] {
+.block-container {
     max-width: 100% !important;
-    white-space: normal !important;
-    height: auto !important;
 }
-
-section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: unset !important;
+section[data-testid="stSidebar"] {
+    overflow-x: hidden !important;
 }
 </style>
 """, unsafe_allow_html=True)
