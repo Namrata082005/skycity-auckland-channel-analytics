@@ -13,81 +13,36 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Professional sidebar behavior for Streamlit Cloud:
-# - No fixed sidebar width, so collapse/expand stays native and the main dashboard
-#   automatically returns to full width.
-# - Filters default to All without showing many selected chips.
-# - If the user selects items manually, chips wrap cleanly instead of getting cut.
+# Fix Streamlit Cloud sidebar/multiselect clipping
 st.markdown("""
 <style>
 section[data-testid="stSidebar"] {
-    overflow-x: hidden !important;
+    width: 390px !important;
+    min-width: 390px !important;
+    overflow-x: visible !important;
+}
+
+section[data-testid="stSidebar"] > div {
+    width: 390px !important;
+    min-width: 390px !important;
 }
 
 section[data-testid="stSidebar"] div[data-baseweb="select"] {
     width: 100% !important;
-}
-
-section[data-testid="stSidebar"] [data-baseweb="select"] > div {
-    flex-wrap: wrap !important;
-    align-items: flex-start !important;
-    overflow: visible !important;
-    min-height: 44px !important;
-    height: auto !important;
+    min-width: 100% !important;
 }
 
 section[data-testid="stSidebar"] div[data-baseweb="tag"] {
     max-width: 100% !important;
-    width: auto !important;
-    height: auto !important;
-    min-height: 30px !important;
-    margin: 3px 4px 3px 0 !important;
-    padding: 4px 8px !important;
-    border-radius: 8px !important;
     white-space: normal !important;
-    overflow: visible !important;
+    height: auto !important;
 }
 
 section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
-    max-width: none !important;
-    width: auto !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
     white-space: normal !important;
-    line-height: 1.25 !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
 }
-
-section[data-testid="stSidebar"] input {
-    min-width: 120px !important;
-}
-
-
-/* Professional top filter panel - avoids sidebar chip clipping */
-.filter-card {
-    background: #ffffff;
-    border: 1px solid #d8dee8;
-    border-radius: 14px;
-    padding: 18px 20px 12px;
-    margin: 0 0 18px 0;
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
-}
-.filter-title {
-    color: #1e3a8a;
-    font-size: 18px;
-    font-weight: 760;
-    margin-bottom: 4px;
-}
-.filter-subtitle {
-    color: #64748b;
-    font-size: 13px;
-    margin-bottom: 10px;
-}
-div[data-baseweb="select"] [data-baseweb="tag"] span {
-    max-width: 220px !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -276,6 +231,35 @@ st.markdown(
         padding: 4px 8px;
         margin-bottom: 5px;
     }
+
+    /* Compact professional sidebar filters - no chip clipping */
+    section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+        min-height: 44px !important;
+        border-radius: 10px !important;
+        border-color: #cbd5e1 !important;
+        overflow: hidden !important;
+    }
+    section[data-testid="stSidebar"] div[data-baseweb="select"] span {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 210px !important;
+    }
+    .filter-summary {
+        background: #f8fafc;
+        border: 1px solid #d8dee8;
+        border-radius: 10px;
+        padding: 12px 13px;
+        margin: 12px 0 16px;
+        color: #475569 !important;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+    .filter-summary strong {
+        color: #1e3a8a !important;
+        font-size: 13px;
+    }
+
     h1, h2, h3, h4, h5, h6, p, label, span {
         letter-spacing: 0;
     }
@@ -652,10 +636,6 @@ def validate_data(data: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
 df = add_risk_columns(load_data())
 
 
-subregion_options = sorted(df["Subregion"].dropna().unique())
-cuisine_options = sorted(df["CuisineType"].dropna().unique())
-segment_options = sorted(df["Segment"].dropna().unique())
-
 with st.sidebar:
     st.markdown("""
     <div class="sidebar-logo">
@@ -663,7 +643,6 @@ with st.sidebar:
         <div class="sidebar-logo-subtitle">Restaurant channel performance and delivery-risk dashboard</div>
     </div>
     """, unsafe_allow_html=True)
-
     st.title("Dashboard Controls")
     appearance_mode = st.radio(
         "Appearance",
@@ -671,13 +650,53 @@ with st.sidebar:
         index=0,
         key="appearance_mode",
     )
+    st.caption("Use the filters to test geographic, cuisine, segment, and channel performance.")
 
+    # Professional compact filters for Streamlit Cloud
+    # Using selectbox prevents selected-chip clipping in the sidebar and allows normal collapse/full-width behavior.
+    subregion_options = sorted(df["Subregion"].dropna().unique())
+    cuisine_options = sorted(df["CuisineType"].dropna().unique())
+    segment_options = sorted(df["Segment"].dropna().unique())
+
+    selected_subregion = st.selectbox(
+        "Subregion",
+        ["All Subregions", *subregion_options],
+        index=0,
+        help="Choose one subregion or keep all included.",
+    )
+    selected_cuisine = st.selectbox(
+        "Cuisine",
+        ["All Cuisines", *cuisine_options],
+        index=0,
+        help="Choose one cuisine category or keep all included.",
+    )
+    selected_segment = st.selectbox(
+        "Restaurant segment",
+        ["All Segments", *segment_options],
+        index=0,
+        help="Choose one segment or keep all included.",
+    )
+
+    subregions = subregion_options if selected_subregion == "All Subregions" else [selected_subregion]
+    cuisines = cuisine_options if selected_cuisine == "All Cuisines" else [selected_cuisine]
+    segments = segment_options if selected_segment == "All Segments" else [selected_segment]
+
+    st.markdown(
+        f"""
+        <div class="filter-summary">
+            <strong>Active filter view</strong><br>
+            Subregion: {selected_subregion}<br>
+            Cuisine: {selected_cuisine}<br>
+            Segment: {selected_segment}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     channel_view = st.radio(
         "Channel view",
         ["All Channels", "In-Store", "Delivery"],
         index=0,
     )
-
     risk_threshold = st.slider(
         "Single aggregator risk threshold",
         min_value=0.50,
@@ -686,9 +705,6 @@ with st.sidebar:
         step=0.05,
         format="%.2f",
     )
-
-    st.markdown("---")
-    st.caption("Filters are placed in the main dashboard area to keep the app clean, responsive, and professional on Streamlit Cloud.")
 
 
 if appearance_mode == "Executive Dark":
@@ -739,6 +755,14 @@ if appearance_mode == "Executive Dark":
             background: #1f2937 !important;
             border-color: #475569 !important;
             color: #e5e7eb !important;
+        }
+        .filter-summary {
+            background: #1f2937 !important;
+            border-color: #475569 !important;
+            color: #cbd5e1 !important;
+        }
+        .filter-summary strong {
+            color: #bfdbfe !important;
         }
         .hero {
             background: linear-gradient(135deg, #111827 0%, #172554 55%, #0f172a 100%) !important;
@@ -840,18 +864,6 @@ if appearance_mode == "Executive Dark":
         table.light-data-table tbody tr:hover td {
             background: #1e293b !important;
         }
-
-        .filter-card {
-            background: #111827 !important;
-            border-color: #334155 !important;
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22) !important;
-        }
-        .filter-title {
-            color: #bfdbfe !important;
-        }
-        .filter-subtitle {
-            color: #cbd5e1 !important;
-        }
         div.stDownloadButton > button {
             background: #3b82f6 !important;
             border-color: #3b82f6 !important;
@@ -867,47 +879,10 @@ if appearance_mode == "Executive Dark":
     )
 
 
-st.markdown("""
-<div class="filter-card">
-    <div class="filter-title">Interactive Filters</div>
-    <div class="filter-subtitle">Leave any field blank to include all values. This layout avoids sidebar clipping and keeps the dashboard presentation clean.</div>
-</div>
-""", unsafe_allow_html=True)
-
-f1, f2, f3 = st.columns(3, gap="large")
-with f1:
-    subregions = st.multiselect(
-        "Subregion",
-        subregion_options,
-        default=[],
-        placeholder="All subregions included",
-        help="Leave blank to include all subregions.",
-    )
-with f2:
-    cuisines = st.multiselect(
-        "Cuisine",
-        cuisine_options,
-        default=[],
-        placeholder="All cuisines included",
-        help="Leave blank to include all cuisine types.",
-    )
-with f3:
-    segments = st.multiselect(
-        "Restaurant segment",
-        segment_options,
-        default=[],
-        placeholder="All segments included",
-        help="Leave blank to include all restaurant segments.",
-    )
-
-selected_subregions = subregions if subregions else subregion_options
-selected_cuisines = cuisines if cuisines else cuisine_options
-selected_segments = segments if segments else segment_options
-
 filtered_df = df[
-    df["Subregion"].isin(selected_subregions)
-    & df["CuisineType"].isin(selected_cuisines)
-    & df["Segment"].isin(selected_segments)
+    df["Subregion"].isin(subregions)
+    & df["CuisineType"].isin(cuisines)
+    & df["Segment"].isin(segments)
 ].copy()
 
 if filtered_df.empty:
