@@ -13,61 +13,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Streamlit Cloud sidebar + filter UI fix
-# This avoids the live-app multiselect clipping issue by keeping filters compact.
-st.markdown("""
-<style>
-/* Wider and stable sidebar on Streamlit Cloud */
-section[data-testid="stSidebar"] {
-    width: 440px !important;
-    min-width: 440px !important;
-    max-width: 440px !important;
-    overflow-x: hidden !important;
-}
-section[data-testid="stSidebar"] > div {
-    width: 440px !important;
-    min-width: 440px !important;
-    max-width: 440px !important;
-    padding-left: 1.4rem !important;
-    padding-right: 1.4rem !important;
-}
-
-/* Multiselect container should never cut selected text */
-section[data-testid="stSidebar"] div[data-baseweb="select"] {
-    width: 100% !important;
-    min-width: 100% !important;
-}
-section[data-testid="stSidebar"] [data-baseweb="select"] > div {
-    flex-wrap: wrap !important;
-    overflow: visible !important;
-    min-height: 42px !important;
-}
-
-/* Selected chips wrap cleanly instead of getting clipped */
-section[data-testid="stSidebar"] div[data-baseweb="tag"] {
-    max-width: 360px !important;
-    height: auto !important;
-    min-height: 30px !important;
-    white-space: normal !important;
-    overflow: visible !important;
-    margin: 3px 4px 3px 0 !important;
-}
-section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    line-height: 1.2 !important;
-}
-
-/* Cleaner small helper text */
-.filter-note {
-    font-size: 12px;
-    color: #64748b;
-    margin: -8px 0 8px 0;
-}
-</style>
-""", unsafe_allow_html=True)
-
 
 CHANNELS = {
     "In-Store": {
@@ -193,6 +138,34 @@ st.markdown(
     .block-container {
         padding-top: 1.5rem;
         padding-bottom: 2rem;
+    }
+    .filter-card {
+        background: #ffffff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px 10px;
+        margin: 6px 0 18px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+    .filter-card-title {
+        color: var(--brand-dark);
+        font-weight: 760;
+        font-size: 17px;
+        margin-bottom: 2px;
+    }
+    .filter-card-note {
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+    .filter-summary {
+        color: #475569;
+        font-size: 13px;
+        margin: 2px 0 0;
+    }
+    div[data-testid="stMultiSelect"] [data-baseweb="tag"] {
+        max-width: 100% !important;
+        white-space: normal !important;
     }
     section[data-testid="stSidebar"] {
         background: #ffffff;
@@ -730,72 +703,17 @@ with st.sidebar:
     st.markdown("""
     <div class="sidebar-logo">
         <div class="sidebar-logo-title">SkyCity Analytics</div>
-        <div class="sidebar-logo-subtitle">Restaurant channel performance and delivery-risk dashboard</div>
+        <div class="sidebar-logo-subtitle">Professional restaurant channel dashboard</div>
     </div>
     """, unsafe_allow_html=True)
-    st.title("Dashboard Controls")
+    st.title("Dashboard")
     appearance_mode = st.radio(
         "Appearance",
         ["Professional Light", "Executive Dark"],
         index=0,
         key="appearance_mode",
     )
-    st.caption("Use the filters to test geographic, cuisine, segment, and channel performance.")
-
-    all_subregions = sorted(df["Subregion"].dropna().unique())
-    all_cuisines = sorted(df["CuisineType"].dropna().unique())
-    all_segments = sorted(df["Segment"].dropna().unique())
-
-    st.markdown("#### Filters")
-
-    use_all_subregions = st.checkbox("Use all subregions", value=True)
-    if use_all_subregions:
-        subregions = all_subregions
-        st.markdown(f"<div class='filter-note'>{len(subregions)} subregions selected</div>", unsafe_allow_html=True)
-    else:
-        subregions = st.multiselect(
-            "Subregion",
-            all_subregions,
-            default=all_subregions[:3],
-            placeholder="Select subregions",
-        )
-
-    use_all_cuisines = st.checkbox("Use all cuisines", value=True)
-    if use_all_cuisines:
-        cuisines = all_cuisines
-        st.markdown(f"<div class='filter-note'>{len(cuisines)} cuisines selected</div>", unsafe_allow_html=True)
-    else:
-        cuisines = st.multiselect(
-            "Cuisine",
-            all_cuisines,
-            default=all_cuisines[:4],
-            placeholder="Select cuisines",
-        )
-
-    use_all_segments = st.checkbox("Use all restaurant segments", value=True)
-    if use_all_segments:
-        segments = all_segments
-        st.markdown(f"<div class='filter-note'>{len(segments)} segments selected</div>", unsafe_allow_html=True)
-    else:
-        segments = st.multiselect(
-            "Restaurant segment",
-            all_segments,
-            default=all_segments[:3],
-            placeholder="Select segments",
-        )
-    channel_view = st.radio(
-        "Channel view",
-        ["All Channels", "In-Store", "Delivery"],
-        index=0,
-    )
-    risk_threshold = st.slider(
-        "Single aggregator risk threshold",
-        min_value=0.50,
-        max_value=0.90,
-        value=0.70,
-        step=0.05,
-        format="%.2f",
-    )
+    st.caption("Collapse this sidebar anytime. The main dashboard will automatically use full screen width.")
 
 
 if appearance_mode == "Executive Dark":
@@ -920,6 +838,18 @@ if appearance_mode == "Executive Dark":
         .sidebar-logo {
             background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%) !important;
         }
+        .filter-card {
+            background: #111827 !important;
+            border-color: #334155 !important;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22) !important;
+        }
+        .filter-card-title {
+            color: #bfdbfe !important;
+        }
+        .filter-card-note,
+        .filter-summary {
+            color: #cbd5e1 !important;
+        }
 
         .light-table-wrap {
             background: #111827 !important;
@@ -962,6 +892,86 @@ if appearance_mode == "Executive Dark":
     )
 
 
+all_subregions = sorted(df["Subregion"].dropna().unique())
+all_cuisines = sorted(df["CuisineType"].dropna().unique())
+all_segments = sorted(df["Segment"].dropna().unique())
+
+st.markdown(
+    """
+    <div class="hero">
+        <h1>SkyCity Auckland Channel Performance Dashboard</h1>
+        <p>
+            Executive view of order-channel mix, geographic behavior, cuisine and segment patterns,
+            dependency risk, and validation checks for performance-based reporting.
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+with st.expander("Dashboard filters", expanded=True):
+    st.markdown(
+        """
+        <div class="filter-card-title">Filter control panel</div>
+        <div class="filter-card-note">Filters are placed here instead of the sidebar so text does not get clipped on Streamlit Cloud.</div>
+        """,
+        unsafe_allow_html=True,
+    )
+    f1, f2, f3 = st.columns(3, gap="large")
+    with f1:
+        subregions = st.multiselect(
+            "Subregion",
+            all_subregions,
+            default=all_subregions,
+            placeholder="Select subregions",
+        )
+    with f2:
+        cuisines = st.multiselect(
+            "Cuisine",
+            all_cuisines,
+            default=all_cuisines,
+            placeholder="Select cuisines",
+        )
+    with f3:
+        segments = st.multiselect(
+            "Restaurant segment",
+            all_segments,
+            default=all_segments,
+            placeholder="Select segments",
+        )
+
+    f4, f5, f6 = st.columns([1, 1, 1.2], gap="large")
+    with f4:
+        channel_view = st.radio(
+            "Channel view",
+            ["All Channels", "In-Store", "Delivery"],
+            index=0,
+            horizontal=True,
+        )
+    with f5:
+        risk_threshold = st.slider(
+            "Single aggregator risk threshold",
+            min_value=0.50,
+            max_value=0.90,
+            value=0.70,
+            step=0.05,
+            format="%.2f",
+        )
+    with f6:
+        st.markdown(
+            f"""
+            <div class="filter-summary">
+                <strong>Current selection:</strong><br>
+                {len(subregions)} subregion(s), {len(cuisines)} cuisine type(s), {len(segments)} restaurant segment(s)
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+if not subregions or not cuisines or not segments:
+    st.warning("Please select at least one subregion, one cuisine, and one restaurant segment.")
+    st.stop()
+
 filtered_df = df[
     df["Subregion"].isin(subregions)
     & df["CuisineType"].isin(cuisines)
@@ -990,20 +1000,6 @@ diversification_score = filtered_df["ChannelDiversificationScore"].mean()
 single_agg_risk_count = int(filtered_df["SingleAggregatorRisk"].sum())
 balanced_count = int(filtered_df["BalancedProfile"].sum())
 dominant_channel = channel_summary.iloc[0]["Channel"] if not channel_summary.empty else "N/A"
-
-
-st.markdown(
-    """
-    <div class="hero">
-        <h1>SkyCity Auckland Channel Performance Dashboard</h1>
-        <p>
-            Executive view of order-channel mix, geographic behavior, cuisine and segment patterns,
-            dependency risk, and validation checks for performance-based reporting.
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
 
 
 st.markdown(
