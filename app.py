@@ -13,6 +13,40 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Professional sidebar behaviour for Streamlit Cloud:
+# - Do NOT force a fixed sidebar width. This keeps the main dashboard fully responsive
+#   when the sidebar is collapsed.
+# - Filters default to "All" without displaying dozens of selected chips.
+st.markdown("""
+<style>
+section[data-testid="stSidebar"] {
+    overflow-x: hidden !important;
+}
+
+section[data-testid="stSidebar"] div[data-baseweb="select"] {
+    width: 100% !important;
+}
+
+/* Keep selected filter chips neat instead of breaking the sidebar layout */
+section[data-testid="stSidebar"] div[data-baseweb="tag"] {
+    max-width: 100% !important;
+    height: 30px !important;
+    border-radius: 8px !important;
+}
+
+section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
+    max-width: 145px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+section[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    overflow-x: hidden !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 CHANNELS = {
     "In-Store": {
@@ -138,34 +172,6 @@ st.markdown(
     .block-container {
         padding-top: 1.5rem;
         padding-bottom: 2rem;
-    }
-    .filter-card {
-        background: #ffffff;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 16px 18px 10px;
-        margin: 6px 0 18px;
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
-    }
-    .filter-card-title {
-        color: var(--brand-dark);
-        font-weight: 760;
-        font-size: 17px;
-        margin-bottom: 2px;
-    }
-    .filter-card-note {
-        color: var(--muted);
-        font-size: 13px;
-        margin-bottom: 12px;
-    }
-    .filter-summary {
-        color: #475569;
-        font-size: 13px;
-        margin: 2px 0 0;
-    }
-    div[data-testid="stMultiSelect"] [data-baseweb="tag"] {
-        max-width: 100% !important;
-        white-space: normal !important;
     }
     section[data-testid="stSidebar"] {
         background: #ffffff;
@@ -479,103 +485,6 @@ st.markdown(
 )
 
 
-# Clean layout polish: balanced boxes without forcing the whole Streamlit grid
-st.markdown("""
-<style>
-/* Main page width and spacing */
-.block-container {
-    padding-top: 1.3rem !important;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
-}
-
-/* Visual cards: equal and clean */
-.visual-grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 18px !important;
-    margin: 6px 0 24px !important;
-}
-.visual-card {
-    border-radius: 12px !important;
-    min-height: 310px !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-.visual-card img {
-    height: 170px !important;
-}
-.visual-card-body {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important;
-}
-
-/* KPI grid: replaces uneven Streamlit 5-column cards */
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 16px;
-    margin: 4px 0 24px;
-}
-.metric-card {
-    height: 136px !important;
-    min-height: 136px !important;
-    border-radius: 12px !important;
-    padding: 16px 16px 14px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-}
-.metric-label {
-    min-height: 30px !important;
-    display: flex !important;
-    align-items: flex-start !important;
-}
-.metric-value {
-    font-size: 26px !important;
-    line-height: 1.05 !important;
-}
-.metric-note {
-    min-height: 32px !important;
-    line-height: 1.35 !important;
-}
-
-/* Panels: neat but natural height */
-.panel {
-    border-radius: 12px !important;
-    padding: 16px 18px !important;
-    margin: 8px 0 16px !important;
-}
-
-/* Tables and charts: softer alignment */
-.light-table-wrap {
-    border-radius: 12px !important;
-}
-.js-plotly-plot {
-    border-radius: 10px !important;
-}
-
-/* Tabs: professional but not bulky */
-button[data-baseweb="tab"] {
-    padding: 10px 18px !important;
-}
-
-@media (max-width: 1200px) {
-    .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-@media (max-width: 900px) {
-    .visual-grid { grid-template-columns: 1fr !important; }
-    .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 600px) {
-    .kpi-grid { grid-template-columns: 1fr; }
-}
-</style>
-""", unsafe_allow_html=True)
-
-
 @st.cache_data
 def load_data() -> pd.DataFrame:
     data_path = Path(__file__).with_name("final_cleaned_skycity_data.csv")
@@ -699,21 +608,68 @@ def validate_data(data: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
 df = add_risk_columns(load_data())
 
 
+subregion_options = sorted(df["Subregion"].dropna().unique())
+cuisine_options = sorted(df["CuisineType"].dropna().unique())
+segment_options = sorted(df["Segment"].dropna().unique())
+
 with st.sidebar:
     st.markdown("""
     <div class="sidebar-logo">
         <div class="sidebar-logo-title">SkyCity Analytics</div>
-        <div class="sidebar-logo-subtitle">Professional restaurant channel dashboard</div>
+        <div class="sidebar-logo-subtitle">Restaurant channel performance and delivery-risk dashboard</div>
     </div>
     """, unsafe_allow_html=True)
-    st.title("Dashboard")
+    st.title("Dashboard Controls")
     appearance_mode = st.radio(
         "Appearance",
         ["Professional Light", "Executive Dark"],
         index=0,
         key="appearance_mode",
     )
-    st.caption("Collapse this sidebar anytime. The main dashboard will automatically use full screen width.")
+    st.caption("Leave a filter blank to include all values. This keeps the sidebar clean and responsive on Streamlit Cloud.")
+
+    subregions = st.multiselect(
+        "Subregion",
+        subregion_options,
+        default=[],
+        placeholder="All subregions",
+        help="Leave blank to include all subregions.",
+    )
+    cuisines = st.multiselect(
+        "Cuisine",
+        cuisine_options,
+        default=[],
+        placeholder="All cuisines",
+        help="Leave blank to include all cuisine types.",
+    )
+    segments = st.multiselect(
+        "Restaurant segment",
+        segment_options,
+        default=[],
+        placeholder="All restaurant segments",
+        help="Leave blank to include all restaurant segments.",
+    )
+    channel_view = st.radio(
+        "Channel view",
+        ["All Channels", "In-Store", "Delivery"],
+        index=0,
+    )
+    risk_threshold = st.slider(
+        "Single aggregator risk threshold",
+        min_value=0.50,
+        max_value=0.90,
+        value=0.70,
+        step=0.05,
+        format="%.2f",
+    )
+
+    st.markdown("---")
+    st.caption(
+        f"Active view: "
+        f"{len(subregions) if subregions else len(subregion_options)} subregions, "
+        f"{len(cuisines) if cuisines else len(cuisine_options)} cuisines, "
+        f"{len(segments) if segments else len(segment_options)} segments."
+    )
 
 
 if appearance_mode == "Executive Dark":
@@ -838,18 +794,6 @@ if appearance_mode == "Executive Dark":
         .sidebar-logo {
             background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%) !important;
         }
-        .filter-card {
-            background: #111827 !important;
-            border-color: #334155 !important;
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22) !important;
-        }
-        .filter-card-title {
-            color: #bfdbfe !important;
-        }
-        .filter-card-note,
-        .filter-summary {
-            color: #cbd5e1 !important;
-        }
 
         .light-table-wrap {
             background: #111827 !important;
@@ -892,90 +836,14 @@ if appearance_mode == "Executive Dark":
     )
 
 
-all_subregions = sorted(df["Subregion"].dropna().unique())
-all_cuisines = sorted(df["CuisineType"].dropna().unique())
-all_segments = sorted(df["Segment"].dropna().unique())
-
-st.markdown(
-    """
-    <div class="hero">
-        <h1>SkyCity Auckland Channel Performance Dashboard</h1>
-        <p>
-            Executive view of order-channel mix, geographic behavior, cuisine and segment patterns,
-            dependency risk, and validation checks for performance-based reporting.
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-with st.expander("Dashboard filters", expanded=True):
-    st.markdown(
-        """
-        <div class="filter-card-title">Filter control panel</div>
-        <div class="filter-card-note">Filters are placed here instead of the sidebar so text does not get clipped on Streamlit Cloud.</div>
-        """,
-        unsafe_allow_html=True,
-    )
-    f1, f2, f3 = st.columns(3, gap="large")
-    with f1:
-        subregions = st.multiselect(
-            "Subregion",
-            all_subregions,
-            default=all_subregions,
-            placeholder="Select subregions",
-        )
-    with f2:
-        cuisines = st.multiselect(
-            "Cuisine",
-            all_cuisines,
-            default=all_cuisines,
-            placeholder="Select cuisines",
-        )
-    with f3:
-        segments = st.multiselect(
-            "Restaurant segment",
-            all_segments,
-            default=all_segments,
-            placeholder="Select segments",
-        )
-
-    f4, f5, f6 = st.columns([1, 1, 1.2], gap="large")
-    with f4:
-        channel_view = st.radio(
-            "Channel view",
-            ["All Channels", "In-Store", "Delivery"],
-            index=0,
-            horizontal=True,
-        )
-    with f5:
-        risk_threshold = st.slider(
-            "Single aggregator risk threshold",
-            min_value=0.50,
-            max_value=0.90,
-            value=0.70,
-            step=0.05,
-            format="%.2f",
-        )
-    with f6:
-        st.markdown(
-            f"""
-            <div class="filter-summary">
-                <strong>Current selection:</strong><br>
-                {len(subregions)} subregion(s), {len(cuisines)} cuisine type(s), {len(segments)} restaurant segment(s)
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-if not subregions or not cuisines or not segments:
-    st.warning("Please select at least one subregion, one cuisine, and one restaurant segment.")
-    st.stop()
+selected_subregions = subregions if subregions else subregion_options
+selected_cuisines = cuisines if cuisines else cuisine_options
+selected_segments = segments if segments else segment_options
 
 filtered_df = df[
-    df["Subregion"].isin(subregions)
-    & df["CuisineType"].isin(cuisines)
-    & df["Segment"].isin(segments)
+    df["Subregion"].isin(selected_subregions)
+    & df["CuisineType"].isin(selected_cuisines)
+    & df["Segment"].isin(selected_segments)
 ].copy()
 
 if filtered_df.empty:
@@ -1000,6 +868,20 @@ diversification_score = filtered_df["ChannelDiversificationScore"].mean()
 single_agg_risk_count = int(filtered_df["SingleAggregatorRisk"].sum())
 balanced_count = int(filtered_df["BalancedProfile"].sum())
 dominant_channel = channel_summary.iloc[0]["Channel"] if not channel_summary.empty else "N/A"
+
+
+st.markdown(
+    """
+    <div class="hero">
+        <h1>SkyCity Auckland Channel Performance Dashboard</h1>
+        <p>
+            Executive view of order-channel mix, geographic behavior, cuisine and segment patterns,
+            dependency risk, and validation checks for performance-based reporting.
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 
 st.markdown(
@@ -1031,38 +913,63 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown(
-    f"""
-    <div class="kpi-grid">
+k1, k2, k3, k4, k5 = st.columns(5)
+with k1:
+    st.markdown(
+        f"""
         <div class="metric-card">
             <div class="metric-label">Channel Order Share</div>
             <div class="metric-value">{fmt_pct(channel_summary.iloc[0]["Order Share"])}</div>
             <div class="metric-note">Dominant channel: {dominant_channel}</div>
         </div>
+        """,
+        unsafe_allow_html=True,
+    )
+with k2:
+    st.markdown(
+        f"""
         <div class="metric-card">
             <div class="metric-label">Aggregator Dependence</div>
             <div class="metric-value">{fmt_pct(avg_aggregator_dependence)}</div>
             <div class="metric-note">Uber Eats + DoorDash order share</div>
         </div>
+        """,
+        unsafe_allow_html=True,
+    )
+with k3:
+    st.markdown(
+        f"""
         <div class="metric-card">
             <div class="metric-label">In-Store Reliance Ratio</div>
             <div class="metric-value">{fmt_pct(in_store_reliance)}</div>
             <div class="metric-note">Walk-in ordering strength</div>
         </div>
+        """,
+        unsafe_allow_html=True,
+    )
+with k4:
+    st.markdown(
+        f"""
         <div class="metric-card">
             <div class="metric-label">Diversification Score</div>
             <div class="metric-value">{fmt_pct(diversification_score)}</div>
             <div class="metric-note">Higher means less channel concentration</div>
         </div>
+        """,
+        unsafe_allow_html=True,
+    )
+with k5:
+    st.markdown(
+        f"""
         <div class="metric-card">
             <div class="metric-label">Total Net Profit</div>
             <div class="metric-value">{fmt_money(total_profit)}</div>
             <div class="metric-note">{fmt_num(total_orders)} orders, {fmt_pct(delivery_share)} delivery</div>
         </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 tabs = st.tabs(
     [
@@ -1078,7 +985,7 @@ tabs = st.tabs(
 
 with tabs[0]:
     st.subheader("Channel Mix Overview")
-    left, right = st.columns(2, gap="large")
+    left, right = st.columns([1.25, 1])
 
     with left:
         fig = px.bar(
@@ -1105,7 +1012,7 @@ with tabs[0]:
         fig.update_traces(textposition="inside", textinfo="percent+label")
         show_chart(fig)
 
-    c1, c2 = st.columns(2, gap="large")
+    c1, c2 = st.columns(2)
     with c1:
         ranked = channel_summary.copy()
         ranked["Market Share"] = ranked["Order Share"].map(fmt_pct)
@@ -1174,7 +1081,7 @@ with tabs[2]:
     cuisine_long = channel_long(filtered_df, ["CuisineType"], active_channels)
     segment_long = channel_long(filtered_df, ["Segment"], active_channels)
 
-    c1, c2 = st.columns(2, gap="large")
+    c1, c2 = st.columns(2)
     with c1:
         fig = px.bar(
             cuisine_long,
@@ -1234,7 +1141,7 @@ with tabs[2]:
 with tabs[3]:
     st.subheader("Dependency Risk Indicator Panels")
 
-    r1, r2, r3, r4 = st.columns(4, gap="medium")
+    r1, r2, r3, r4 = st.columns(4)
     r1.metric("Single Aggregator Risk", single_agg_risk_count, f">= {fmt_pct(risk_threshold)} on Uber Eats or DoorDash")
     r2.metric("Balanced Profiles", balanced_count, "Max channel share <= 45%")
     r3.metric("High-Risk Category", int((filtered_df["AggregatorRiskCategory"] == "High Risk").sum()))
@@ -1299,7 +1206,7 @@ with tabs[3]:
 
 with tabs[4]:
     st.subheader("Data Validation & Consistency Checks")
-    v1, v2, v3 = st.columns(3, gap="medium")
+    v1, v2, v3 = st.columns(3)
     v1.metric("Order Count Mismatches", validation_summary["order_mismatches"])
     v2.metric("Share Total Mismatches", validation_summary["share_mismatches"])
     v3.metric("Monthly Order Outliers", validation_summary["outliers"])
@@ -1338,7 +1245,7 @@ with tabs[4]:
 
 with tabs[5]:
     st.subheader("Performance Recommendations")
-    rec_left, rec_right = st.columns(2, gap="large")
+    rec_left, rec_right = st.columns(2)
 
     with rec_left:
         st.markdown(
