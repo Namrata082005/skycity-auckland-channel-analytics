@@ -60,6 +60,34 @@ section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
 section[data-testid="stSidebar"] input {
     min-width: 120px !important;
 }
+
+
+/* Professional top filter panel - avoids sidebar chip clipping */
+.filter-card {
+    background: #ffffff;
+    border: 1px solid #d8dee8;
+    border-radius: 14px;
+    padding: 18px 20px 12px;
+    margin: 0 0 18px 0;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+}
+.filter-title {
+    color: #1e3a8a;
+    font-size: 18px;
+    font-weight: 760;
+    margin-bottom: 4px;
+}
+.filter-subtitle {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+div[data-baseweb="select"] [data-baseweb="tag"] span {
+    max-width: 220px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -635,6 +663,7 @@ with st.sidebar:
         <div class="sidebar-logo-subtitle">Restaurant channel performance and delivery-risk dashboard</div>
     </div>
     """, unsafe_allow_html=True)
+
     st.title("Dashboard Controls")
     appearance_mode = st.radio(
         "Appearance",
@@ -642,34 +671,13 @@ with st.sidebar:
         index=0,
         key="appearance_mode",
     )
-    st.caption("Leave a filter blank to include all values. This keeps the sidebar clean and responsive on Streamlit Cloud.")
 
-    subregions = st.multiselect(
-        "Subregion",
-        subregion_options,
-        default=[],
-        placeholder="All subregions included",
-        help="Leave blank to include all subregions.",
-    )
-    cuisines = st.multiselect(
-        "Cuisine",
-        cuisine_options,
-        default=[],
-        placeholder="All cuisines included",
-        help="Leave blank to include all cuisine types.",
-    )
-    segments = st.multiselect(
-        "Restaurant segment",
-        segment_options,
-        default=[],
-        placeholder="All segments included",
-        help="Leave blank to include all restaurant segments.",
-    )
     channel_view = st.radio(
         "Channel view",
         ["All Channels", "In-Store", "Delivery"],
         index=0,
     )
+
     risk_threshold = st.slider(
         "Single aggregator risk threshold",
         min_value=0.50,
@@ -680,12 +688,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.caption(
-        f"Active view: "
-        f"{len(subregions) if subregions else len(subregion_options)} subregions, "
-        f"{len(cuisines) if cuisines else len(cuisine_options)} cuisines, "
-        f"{len(segments) if segments else len(segment_options)} segments."
-    )
+    st.caption("Filters are placed in the main dashboard area to keep the app clean, responsive, and professional on Streamlit Cloud.")
 
 
 if appearance_mode == "Executive Dark":
@@ -837,6 +840,18 @@ if appearance_mode == "Executive Dark":
         table.light-data-table tbody tr:hover td {
             background: #1e293b !important;
         }
+
+        .filter-card {
+            background: #111827 !important;
+            border-color: #334155 !important;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22) !important;
+        }
+        .filter-title {
+            color: #bfdbfe !important;
+        }
+        .filter-subtitle {
+            color: #cbd5e1 !important;
+        }
         div.stDownloadButton > button {
             background: #3b82f6 !important;
             border-color: #3b82f6 !important;
@@ -851,6 +866,39 @@ if appearance_mode == "Executive Dark":
         unsafe_allow_html=True,
     )
 
+
+st.markdown("""
+<div class="filter-card">
+    <div class="filter-title">Interactive Filters</div>
+    <div class="filter-subtitle">Leave any field blank to include all values. This layout avoids sidebar clipping and keeps the dashboard presentation clean.</div>
+</div>
+""", unsafe_allow_html=True)
+
+f1, f2, f3 = st.columns(3, gap="large")
+with f1:
+    subregions = st.multiselect(
+        "Subregion",
+        subregion_options,
+        default=[],
+        placeholder="All subregions included",
+        help="Leave blank to include all subregions.",
+    )
+with f2:
+    cuisines = st.multiselect(
+        "Cuisine",
+        cuisine_options,
+        default=[],
+        placeholder="All cuisines included",
+        help="Leave blank to include all cuisine types.",
+    )
+with f3:
+    segments = st.multiselect(
+        "Restaurant segment",
+        segment_options,
+        default=[],
+        placeholder="All segments included",
+        help="Leave blank to include all restaurant segments.",
+    )
 
 selected_subregions = subregions if subregions else subregion_options
 selected_cuisines = cuisines if cuisines else cuisine_options
