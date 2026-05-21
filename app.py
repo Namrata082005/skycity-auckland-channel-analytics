@@ -13,10 +13,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Professional sidebar behaviour for Streamlit Cloud:
-# - Do NOT force a fixed sidebar width. This keeps the main dashboard fully responsive
-#   when the sidebar is collapsed.
-# - Filters default to "All" without displaying dozens of selected chips.
+# Professional sidebar behavior for Streamlit Cloud:
+# - No fixed sidebar width, so collapse/expand stays native and the main dashboard
+#   automatically returns to full width.
+# - Filters default to All without showing many selected chips.
+# - If the user selects items manually, chips wrap cleanly instead of getting cut.
 st.markdown("""
 <style>
 section[data-testid="stSidebar"] {
@@ -27,22 +28,37 @@ section[data-testid="stSidebar"] div[data-baseweb="select"] {
     width: 100% !important;
 }
 
-/* Keep selected filter chips neat instead of breaking the sidebar layout */
+section[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    overflow: visible !important;
+    min-height: 44px !important;
+    height: auto !important;
+}
+
 section[data-testid="stSidebar"] div[data-baseweb="tag"] {
     max-width: 100% !important;
-    height: 30px !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 30px !important;
+    margin: 3px 4px 3px 0 !important;
+    padding: 4px 8px !important;
     border-radius: 8px !important;
+    white-space: normal !important;
+    overflow: visible !important;
 }
 
 section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
-    max-width: 145px !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
+    max-width: none !important;
+    width: auto !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    line-height: 1.25 !important;
 }
 
-section[data-testid="stSidebar"] [data-baseweb="select"] > div {
-    overflow-x: hidden !important;
+section[data-testid="stSidebar"] input {
+    min-width: 120px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -632,21 +648,21 @@ with st.sidebar:
         "Subregion",
         subregion_options,
         default=[],
-        placeholder="All subregions",
+        placeholder="All subregions included",
         help="Leave blank to include all subregions.",
     )
     cuisines = st.multiselect(
         "Cuisine",
         cuisine_options,
         default=[],
-        placeholder="All cuisines",
+        placeholder="All cuisines included",
         help="Leave blank to include all cuisine types.",
     )
     segments = st.multiselect(
         "Restaurant segment",
         segment_options,
         default=[],
-        placeholder="All restaurant segments",
+        placeholder="All segments included",
         help="Leave blank to include all restaurant segments.",
     )
     channel_view = st.radio(
