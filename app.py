@@ -6,13 +6,45 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-
 st.set_page_config(
     page_title="SkyCity Channel Performance Dashboard",
-    page_icon=":bar_chart:",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+# Fix Streamlit Cloud sidebar/multiselect clipping
+st.markdown("""
+<style>
+section[data-testid="stSidebar"] {
+    width: 390px !important;
+    min-width: 390px !important;
+    overflow-x: visible !important;
+}
+
+section[data-testid="stSidebar"] > div {
+    width: 390px !important;
+    min-width: 390px !important;
+}
+
+section[data-testid="stSidebar"] div[data-baseweb="select"] {
+    width: 100% !important;
+    min-width: 100% !important;
+}
+
+section[data-testid="stSidebar"] div[data-baseweb="tag"] {
+    max-width: 100% !important;
+    white-space: normal !important;
+    height: auto !important;
+}
+
+section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 CHANNELS = {
@@ -101,7 +133,7 @@ def show_chart(fig: go.Figure) -> None:
         zerolinecolor=line,
         title_font_color=axis,
     )
-    st.plotly_chart(fig, use_container_width=True, theme=None)
+    st.plotly_chart(fig, width="stretch", theme=None)
 
 
 def show_table(data: pd.DataFrame, height: int | None = None) -> None:
@@ -222,6 +254,66 @@ st.markdown(
         font-size: 15px;
         margin: 0;
     }
+
+    .visual-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin: 4px 0 22px;
+    }
+    .visual-card {
+        background: #ffffff;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+    }
+    .visual-card img {
+        width: 100%;
+        height: 165px;
+        object-fit: cover;
+        display: block;
+    }
+    .visual-card-body {
+        padding: 13px 15px 15px;
+    }
+    .visual-card-title {
+        color: var(--brand-dark);
+        font-size: 16px;
+        font-weight: 760;
+        margin-bottom: 5px;
+    }
+    .visual-card-text {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+    }
+    .sidebar-logo {
+        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+        color: #ffffff !important;
+        border-radius: 10px;
+        padding: 16px 14px;
+        margin-bottom: 14px;
+        box-shadow: 0 10px 22px rgba(30, 58, 138, 0.22);
+    }
+    .sidebar-logo-title {
+        color: #ffffff !important;
+        font-size: 21px;
+        font-weight: 800;
+        letter-spacing: .02em;
+        margin-bottom: 4px;
+    }
+    .sidebar-logo-subtitle {
+        color: #dbeafe !important;
+        font-size: 12px;
+        line-height: 1.35;
+    }
+    @media (max-width: 900px) {
+        .visual-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
     .metric-card {
         background: var(--panel);
         border: 1px solid var(--line);
@@ -392,6 +484,103 @@ st.markdown(
 )
 
 
+# Clean layout polish: balanced boxes without forcing the whole Streamlit grid
+st.markdown("""
+<style>
+/* Main page width and spacing */
+.block-container {
+    padding-top: 1.3rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+}
+
+/* Visual cards: equal and clean */
+.visual-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    margin: 6px 0 24px !important;
+}
+.visual-card {
+    border-radius: 12px !important;
+    min-height: 310px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+.visual-card img {
+    height: 170px !important;
+}
+.visual-card-body {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+}
+
+/* KPI grid: replaces uneven Streamlit 5-column cards */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+    margin: 4px 0 24px;
+}
+.metric-card {
+    height: 136px !important;
+    min-height: 136px !important;
+    border-radius: 12px !important;
+    padding: 16px 16px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+}
+.metric-label {
+    min-height: 30px !important;
+    display: flex !important;
+    align-items: flex-start !important;
+}
+.metric-value {
+    font-size: 26px !important;
+    line-height: 1.05 !important;
+}
+.metric-note {
+    min-height: 32px !important;
+    line-height: 1.35 !important;
+}
+
+/* Panels: neat but natural height */
+.panel {
+    border-radius: 12px !important;
+    padding: 16px 18px !important;
+    margin: 8px 0 16px !important;
+}
+
+/* Tables and charts: softer alignment */
+.light-table-wrap {
+    border-radius: 12px !important;
+}
+.js-plotly-plot {
+    border-radius: 10px !important;
+}
+
+/* Tabs: professional but not bulky */
+button[data-baseweb="tab"] {
+    padding: 10px 18px !important;
+}
+
+@media (max-width: 1200px) {
+    .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+    .visual-grid { grid-template-columns: 1fr !important; }
+    .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 @st.cache_data
 def load_data() -> pd.DataFrame:
     data_path = Path(__file__).with_name("final_cleaned_skycity_data.csv")
@@ -516,6 +705,12 @@ df = add_risk_columns(load_data())
 
 
 with st.sidebar:
+    st.markdown("""
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-title">SkyCity Analytics</div>
+        <div class="sidebar-logo-subtitle">Restaurant channel performance and delivery-risk dashboard</div>
+    </div>
+    """, unsafe_allow_html=True)
     st.title("Dashboard Controls")
     appearance_mode = st.radio(
         "Appearance",
@@ -662,6 +857,22 @@ if appearance_mode == "Executive Dark":
             color: #fecaca !important;
             border-left-color: #ef4444 !important;
         }
+
+        .visual-card {
+            background: #111827 !important;
+            border-color: #334155 !important;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22) !important;
+        }
+        .visual-card-title {
+            color: #bfdbfe !important;
+        }
+        .visual-card-text {
+            color: #cbd5e1 !important;
+        }
+        .sidebar-logo {
+            background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%) !important;
+        }
+
         .light-table-wrap {
             background: #111827 !important;
             border-color: #334155 !important;
@@ -747,63 +958,67 @@ st.markdown(
 )
 
 
-k1, k2, k3, k4, k5 = st.columns(5)
-with k1:
-    st.markdown(
-        f"""
+st.markdown(
+    """
+    <div class="visual-grid">
+        <div class="visual-card">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80" alt="Restaurant interior">
+            <div class="visual-card-body">
+                <div class="visual-card-title">Restaurant Channel View</div>
+                <div class="visual-card-text">Compare in-store ordering strength with delivery-platform performance across Auckland restaurants.</div>
+            </div>
+        </div>
+        <div class="visual-card">
+            <img src="https://images.unsplash.com/photo-1526367790999-0150786686a2?auto=format&fit=crop&w=900&q=80" alt="Food delivery package">
+            <div class="visual-card-body">
+                <div class="visual-card-title">Delivery Platform Insights</div>
+                <div class="visual-card-text">Track Uber Eats, DoorDash, and self-delivery contribution to orders, revenue, and risk.</div>
+            </div>
+        </div>
+        <div class="visual-card">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80" alt="Analytics dashboard">
+            <div class="visual-card-body">
+                <div class="visual-card-title">Executive Analytics</div>
+                <div class="visual-card-text">Use KPI cards, heatmaps, validation checks, and recommendations for internship presentation.</div>
+            </div>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    f"""
+    <div class="kpi-grid">
         <div class="metric-card">
             <div class="metric-label">Channel Order Share</div>
             <div class="metric-value">{fmt_pct(channel_summary.iloc[0]["Order Share"])}</div>
             <div class="metric-note">Dominant channel: {dominant_channel}</div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-with k2:
-    st.markdown(
-        f"""
         <div class="metric-card">
             <div class="metric-label">Aggregator Dependence</div>
             <div class="metric-value">{fmt_pct(avg_aggregator_dependence)}</div>
             <div class="metric-note">Uber Eats + DoorDash order share</div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-with k3:
-    st.markdown(
-        f"""
         <div class="metric-card">
             <div class="metric-label">In-Store Reliance Ratio</div>
             <div class="metric-value">{fmt_pct(in_store_reliance)}</div>
             <div class="metric-note">Walk-in ordering strength</div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-with k4:
-    st.markdown(
-        f"""
         <div class="metric-card">
             <div class="metric-label">Diversification Score</div>
             <div class="metric-value">{fmt_pct(diversification_score)}</div>
             <div class="metric-note">Higher means less channel concentration</div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-with k5:
-    st.markdown(
-        f"""
         <div class="metric-card">
             <div class="metric-label">Total Net Profit</div>
             <div class="metric-value">{fmt_money(total_profit)}</div>
             <div class="metric-note">{fmt_num(total_orders)} orders, {fmt_pct(delivery_share)} delivery</div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 tabs = st.tabs(
     [
@@ -819,7 +1034,7 @@ tabs = st.tabs(
 
 with tabs[0]:
     st.subheader("Channel Mix Overview")
-    left, right = st.columns([1.25, 1])
+    left, right = st.columns(2, gap="large")
 
     with left:
         fig = px.bar(
@@ -846,7 +1061,7 @@ with tabs[0]:
         fig.update_traces(textposition="inside", textinfo="percent+label")
         show_chart(fig)
 
-    c1, c2 = st.columns(2)
+    c1, c2 = st.columns(2, gap="large")
     with c1:
         ranked = channel_summary.copy()
         ranked["Market Share"] = ranked["Order Share"].map(fmt_pct)
@@ -915,7 +1130,7 @@ with tabs[2]:
     cuisine_long = channel_long(filtered_df, ["CuisineType"], active_channels)
     segment_long = channel_long(filtered_df, ["Segment"], active_channels)
 
-    c1, c2 = st.columns(2)
+    c1, c2 = st.columns(2, gap="large")
     with c1:
         fig = px.bar(
             cuisine_long,
@@ -975,7 +1190,7 @@ with tabs[2]:
 with tabs[3]:
     st.subheader("Dependency Risk Indicator Panels")
 
-    r1, r2, r3, r4 = st.columns(4)
+    r1, r2, r3, r4 = st.columns(4, gap="medium")
     r1.metric("Single Aggregator Risk", single_agg_risk_count, f">= {fmt_pct(risk_threshold)} on Uber Eats or DoorDash")
     r2.metric("Balanced Profiles", balanced_count, "Max channel share <= 45%")
     r3.metric("High-Risk Category", int((filtered_df["AggregatorRiskCategory"] == "High Risk").sum()))
@@ -1040,7 +1255,7 @@ with tabs[3]:
 
 with tabs[4]:
     st.subheader("Data Validation & Consistency Checks")
-    v1, v2, v3 = st.columns(3)
+    v1, v2, v3 = st.columns(3, gap="medium")
     v1.metric("Order Count Mismatches", validation_summary["order_mismatches"])
     v2.metric("Share Total Mismatches", validation_summary["share_mismatches"])
     v3.metric("Monthly Order Outliers", validation_summary["outliers"])
@@ -1079,7 +1294,7 @@ with tabs[4]:
 
 with tabs[5]:
     st.subheader("Performance Recommendations")
-    rec_left, rec_right = st.columns(2)
+    rec_left, rec_right = st.columns(2, gap="large")
 
     with rec_left:
         st.markdown(
