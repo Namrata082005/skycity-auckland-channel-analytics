@@ -13,35 +13,57 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Fix Streamlit Cloud sidebar/multiselect clipping
+# Streamlit Cloud sidebar + filter UI fix
+# This avoids the live-app multiselect clipping issue by keeping filters compact.
 st.markdown("""
 <style>
+/* Wider and stable sidebar on Streamlit Cloud */
 section[data-testid="stSidebar"] {
-    width: 390px !important;
-    min-width: 390px !important;
-    overflow-x: visible !important;
+    width: 440px !important;
+    min-width: 440px !important;
+    max-width: 440px !important;
+    overflow-x: hidden !important;
 }
-
 section[data-testid="stSidebar"] > div {
-    width: 390px !important;
-    min-width: 390px !important;
+    width: 440px !important;
+    min-width: 440px !important;
+    max-width: 440px !important;
+    padding-left: 1.4rem !important;
+    padding-right: 1.4rem !important;
 }
 
+/* Multiselect container should never cut selected text */
 section[data-testid="stSidebar"] div[data-baseweb="select"] {
     width: 100% !important;
     min-width: 100% !important;
 }
-
-section[data-testid="stSidebar"] div[data-baseweb="tag"] {
-    max-width: 100% !important;
-    white-space: normal !important;
-    height: auto !important;
+section[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+    min-height: 42px !important;
 }
 
+/* Selected chips wrap cleanly instead of getting clipped */
+section[data-testid="stSidebar"] div[data-baseweb="tag"] {
+    max-width: 360px !important;
+    height: auto !important;
+    min-height: 30px !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    margin: 3px 4px 3px 0 !important;
+}
 section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
     white-space: normal !important;
     overflow: visible !important;
-    text-overflow: unset !important;
+    text-overflow: clip !important;
+    line-height: 1.2 !important;
+}
+
+/* Cleaner small helper text */
+.filter-note {
+    font-size: 12px;
+    color: #64748b;
+    margin: -8px 0 8px 0;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -720,21 +742,47 @@ with st.sidebar:
     )
     st.caption("Use the filters to test geographic, cuisine, segment, and channel performance.")
 
-    subregions = st.multiselect(
-        "Subregion",
-        sorted(df["Subregion"].dropna().unique()),
-        default=sorted(df["Subregion"].dropna().unique()),
-    )
-    cuisines = st.multiselect(
-        "Cuisine",
-        sorted(df["CuisineType"].dropna().unique()),
-        default=sorted(df["CuisineType"].dropna().unique()),
-    )
-    segments = st.multiselect(
-        "Restaurant segment",
-        sorted(df["Segment"].dropna().unique()),
-        default=sorted(df["Segment"].dropna().unique()),
-    )
+    all_subregions = sorted(df["Subregion"].dropna().unique())
+    all_cuisines = sorted(df["CuisineType"].dropna().unique())
+    all_segments = sorted(df["Segment"].dropna().unique())
+
+    st.markdown("#### Filters")
+
+    use_all_subregions = st.checkbox("Use all subregions", value=True)
+    if use_all_subregions:
+        subregions = all_subregions
+        st.markdown(f"<div class='filter-note'>{len(subregions)} subregions selected</div>", unsafe_allow_html=True)
+    else:
+        subregions = st.multiselect(
+            "Subregion",
+            all_subregions,
+            default=all_subregions[:3],
+            placeholder="Select subregions",
+        )
+
+    use_all_cuisines = st.checkbox("Use all cuisines", value=True)
+    if use_all_cuisines:
+        cuisines = all_cuisines
+        st.markdown(f"<div class='filter-note'>{len(cuisines)} cuisines selected</div>", unsafe_allow_html=True)
+    else:
+        cuisines = st.multiselect(
+            "Cuisine",
+            all_cuisines,
+            default=all_cuisines[:4],
+            placeholder="Select cuisines",
+        )
+
+    use_all_segments = st.checkbox("Use all restaurant segments", value=True)
+    if use_all_segments:
+        segments = all_segments
+        st.markdown(f"<div class='filter-note'>{len(segments)} segments selected</div>", unsafe_allow_html=True)
+    else:
+        segments = st.multiselect(
+            "Restaurant segment",
+            all_segments,
+            default=all_segments[:3],
+            placeholder="Select segments",
+        )
     channel_view = st.radio(
         "Channel view",
         ["All Channels", "In-Store", "Delivery"],
